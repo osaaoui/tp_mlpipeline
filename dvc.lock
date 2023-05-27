@@ -39,8 +39,8 @@ stages:
       md5: b1d7914874605396150ead0a88056f96
       size: 11195
     - path: src/models/train_model.py
-      md5: 586b204c525c6d835ef9550541378af5
-      size: 3428
+      md5: a745a57e9d241657c801f51ad4851b3f
+      size: 3583
     params:
       params.yaml:
         random_forest.max_depth: 10

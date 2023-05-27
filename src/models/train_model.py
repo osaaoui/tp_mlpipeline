@@ -62,7 +62,9 @@ def train_and_evaluate(config_path):
 ################### MLFLOW ###############################
     mlflow_config = config["mlflow_config"]
     remote_server_uri = mlflow_config["remote_server_uri"]
-
+    config = read_params(config_path)
+    mlflow_config = config["mlflow_config"] 
+    model_dir = config["model_dir"]
     mlflow.set_tracking_uri(remote_server_uri)
     mlflow.set_experiment(mlflow_config["experiment_name"])
 
@@ -71,7 +73,7 @@ def train_and_evaluate(config_path):
         model.fit(train_x, train_y.ravel())
         y_pred = model.predict(test_x)
         mean_squared_error, r2_score = accuracymeasures(test_y,y_pred,'weighted')
-
+        joblib.dump(model, model_dir)
         mlflow.log_param("max_depth",max_depth)
         mlflow.log_param("n_estimators", n_estimators)
 
