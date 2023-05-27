@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 #from sklearn.ensemble import RandomForestClassifier
 from sklearn import linear_model
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn import metrics
 from sklearn.metrics import f1_score,recall_score,accuracy_score,precision_score,confusion_matrix,classification_report
 from sklearn.ensemble import RandomForestRegressor
 #from sklearn.linear_model import LinearRegression
@@ -24,8 +24,8 @@ def read_params(config_path):
     return config
 
 def accuracymeasures(y_test,predictions,avg_method):
-    mean_squared_error=np.sqrt(mean_squared_error(y_test, predictions))
-    r2_score=r2_score(y_test, predictions)
+    mean_squared_error=np.sqrt(metrics.mean_squared_error(y_test, predictions))
+    r2_score=metrics.r2_score(y_test, predictions)
     print("Metrics")
     print("---------------------","\n")
     print("MSE: ", mean_squared_error)
@@ -39,8 +39,9 @@ def get_feat_and_target(df,target):
     input: dataframe and target column
     output: two dataframes for x and y 
     """
-    x=df.drop(target,axis=1)
-    y=df[[target]]
+
+    x=df.iloc[:, 0:7]
+    y=df.iloc[:, 7].values.reshape(-1,1)
     return x,y    
 
 def train_and_evaluate(config_path):
@@ -57,6 +58,7 @@ def train_and_evaluate(config_path):
     train_x,train_y=get_feat_and_target(train,target)
     test_x,test_y=get_feat_and_target(test,target)
 
+
 ################### MLFLOW ###############################
     mlflow_config = config["mlflow_config"]
     remote_server_uri = mlflow_config["remote_server_uri"]
@@ -65,17 +67,16 @@ def train_and_evaluate(config_path):
     mlflow.set_experiment(mlflow_config["experiment_name"])
 
     with mlflow.start_run(run_name=mlflow_config["run_name"]) as mlops_run:
-        model = RandomForestRegressor(max_depth=max_depth, n_estimators=n_estimators)
-        model.fit(train_x, train_y)
+        model = RandomForestRegressor(max_depth=max_depth,n_estimators=n_estimators)
+        model.fit(train_x, train_y.ravel())
         y_pred = model.predict(test_x)
-        mean_squared_error, r2_score = accuracymeasures(test_y,y_pred)
-	mlflow.log_param("max_depth",max_depth)
-	mlflow.log_param("n_estimators", n_estimators)
+        mean_squared_error, r2_score = accuracymeasures(test_y,y_pred,'weighted')
 
-        mlflow.log_metric("MSE", mean_squared_error)
-        mlflow.log_metric("R2", r2_score)
-        #mlflow.log_metric("recall", recall)
-        #mlflow.log_metric("f1_score", f1score)
+        mlflow.log_param("max_depth",max_depth)
+        mlflow.log_param("n_estimators", n_estimators)
+
+        mlflow.log_metric("mean_squared_error", mean_squared_error)
+        mlflow.log_metric("r2_score", r2_score)
        
         tracking_url_type_store = urlparse(mlflow.get_artifact_uri()).scheme
 

@@ -29,3 +29,19 @@ stages:
     - path: data/processed/churn_train.csv
       md5: b1d7914874605396150ead0a88056f96
       size: 11195
+  model_train:
+    cmd: python3 src/models/train_model.py --config=params.yaml
+    deps:
+    - path: data/processed/churn_test.csv
+      md5: 9444020a176ac379d708e984ed8c4a20
+      size: 2840
+    - path: data/processed/churn_train.csv
+      md5: b1d7914874605396150ead0a88056f96
+      size: 11195
+    - path: src/models/train_model.py
+      md5: 586b204c525c6d835ef9550541378af5
+      size: 3428
+    params:
+      params.yaml:
+        random_forest.max_depth: 10
+        random_forest.n_estimators: 30
