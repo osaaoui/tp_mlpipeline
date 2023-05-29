@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "../../bdeb/session_hiver2023/A59_apprentissage_renforcement/TP"
+		},
+		{
+			"path": "../tp_ecosysteme"
+		},
+		{
+			"path": "../tp_eco2"
+		},
+		{
+			"path": "../containers/tp_eco2"
+		},
+		{
+			"path": "../../bdeb/tp_silva_flask"
+		},
+		{
+			"path": "../../bdeb/session_hiver2023/A57_ecosysteme_ia/exemple_house_prediction"
+		},
+		{
+			"path": "."
+		}
+	]
+}
